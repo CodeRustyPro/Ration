@@ -36,5 +36,4 @@ To prevent rumen acidosis, the system auto-generates a 4-phase transition (Recei
 | **Optimal Exit** | Day 247 | The intersection of Marginal Revenue and Marginal Cost. |
 | **Sensitivity Analysis** | Tornado Chart | Identifies if Profit is more sensitive to Feed vs. Sale Price. |
 
----
-*This README is designed to read like a high-level engineering whitepaper. It frames the Bio-Economic Feed Ration Optimizer not just as a "hackathon project," but as a sophisticated decision-engine that bridges the gap between animal science and financial derivatives.*
+
