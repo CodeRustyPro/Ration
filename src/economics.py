@@ -44,7 +44,7 @@ def calculate_costs(
     profile: Dict[str, Any],
     feed_cost_per_day: float,
     days_on_feed: float,
-    current_market_price_cwt: float = 190.0,
+    current_market_price_cwt: float = 240.0,
 ) -> CostResult:
     """
     Compute comprehensive feedlot economics based on user profile.
@@ -72,7 +72,7 @@ def calculate_costs(
     target_wt = profile.get("target_weight", 1350)
     
     # 2. Purchase calculation
-    purchase_cwt = profile.get("purchase_price_cwt", 245.0)
+    purchase_cwt = profile.get("purchase_price_cwt", 370.0)
     # Transit shrink impacts true starting cost because you pay for the shrunk weight
     transit_shrink = profile.get("transit_shrink_pct", 0.0)
     freight_cwt = profile.get("freight_dt_cwt", 0.0)

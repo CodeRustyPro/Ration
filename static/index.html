@@ -59,7 +59,13 @@
                         </div>
                         <div class="input-group">
                             <label>Target weight (lb)</label>
-                            <input type="number" id="target-weight" value="1350" min="800" max="1800" step="25">
+                            <input type="number" id="target-weight" value="1400" min="800" max="1800" step="25">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Target ADG (lb/day)</label>
+                            <input type="number" id="target-adg" value="3.2" min="1.5" max="4.5" step="0.1">
                         </div>
                     </div>
 
@@ -150,7 +156,7 @@
                 <div class="dual-section">
                     <div class="section-card recipe-container">
                         <div class="section-header">
-                            <h2>Today's Recipe <span style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:normal">(As-Fed)</span></h2>
+                            <h2>Today's Recipe <span style="font-size:13px;color:var(--text-light);font-weight:normal">(As-Fed)</span></h2>
                             <span class="section-sub" id="recipe-sub"></span>
                         </div>
                         <div id="recipe-bars" class="recipe-bars">
@@ -217,7 +223,7 @@
                 <!-- WHAT MOVES PROFIT MOST -->
                 <div class="section-card">
                     <h2>What Moves Your Profit Most</h2>
-                    <p class="hint">A $10/cwt sale price swing moves ~$130/head - more than all operating costs combined.</p>
+                    <p class="hint">A $10/cwt sale price swing moves ~$134/head — more than all operating costs combined.</p>
                     <div id="sensitivity-bars" class="sensitivity-bars"></div>
                 </div>
 

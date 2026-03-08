@@ -391,11 +391,11 @@ def get_price_history(
 # ---------------------------------------------------------------------------
 
 FALLBACK_PRICES_PER_TON: Dict[str, float] = {
-    "CornGrain":   195.0,   # $/ton DM basis (≈$4.90/bu)
+    "CornGrain":   195.0,   # $/ton DM basis (~$4.80/bu)
     "SoybeanMeal": 380.0,   # $/ton DM basis (48% SBM)
     "DDGS":        185.0,   # $/ton DM basis
-    "CornSilage":  120.0,   # $/ton DM basis (Iowa State: 8-10× corn bu; UNL: $145-196 incl. harvest)
-    "AlfalfaHay":  230.0,   # $/ton DM basis (good quality)
+    "CornSilage":  120.0,   # $/ton DM basis (Iowa State: 8-10× corn bu price)
+    "AlfalfaHay":  250.0,   # $/ton DM basis (good quality)
     "GrassHay":    150.0,   # $/ton DM basis
     "Urea":        580.0,   # $/ton
     "Limestone":   55.0,    # $/ton

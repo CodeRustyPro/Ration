@@ -154,8 +154,12 @@ h4,
 
 .setup-container {
     max-width: 760px;
-    margin: 0 auto;
-    padding: 60px 20px 80px;
+    margin: 32px auto;
+    padding: 60px 40px 60px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-heavy);
     animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -239,18 +243,18 @@ h4,
 /* Glass Cards */
 .setup-card,
 .section-card {
-    background: #FFFFFF;
+    background: #FAFBFC;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 12px;
     padding: 32px;
     margin-bottom: 24px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     transition: box-shadow 0.3s ease;
 }
 
 .setup-card:hover,
 .section-card:hover {
-    box-shadow: var(--shadow-heavy);
+    box-shadow: var(--shadow);
 }
 
 .setup-card h2,
@@ -526,8 +530,12 @@ h4,
 
 #results-content {
     max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
+    margin: 32px auto;
+    padding: 40px 40px 60px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-heavy);
 }
 
 /* KPI row */
@@ -545,18 +553,18 @@ h4,
 }
 
 .kpi-card {
-    background: #FFFFFF;
+    background: #FAFBFC;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 12px;
     padding: 24px 16px;
     text-align: center;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .kpi-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-heavy);
+    box-shadow: var(--shadow);
 }
 
 .kpi-label {

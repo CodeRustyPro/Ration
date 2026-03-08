@@ -63,8 +63,15 @@ def _get_usda_prices():
     except Exception:
         prices = {}
 
+    # Convert USDA as-fed prices to DM basis
+    dm_prices = {}
+    for k, v in prices.items():
+        if k in INGREDIENTS:
+            dm_pct = INGREDIENTS[k]["dm_pct"]
+            dm_prices[k] = v / (dm_pct / 100.0)
+
     merged = dict(FALLBACK_PRICES_PER_TON)
-    merged.update({k: v for k, v in prices.items() if k in INGREDIENTS})
+    merged.update(dm_prices)
     _price_cache["prices"] = merged
     _price_cache["fetched_at"] = now
     return merged
@@ -86,17 +93,20 @@ def serve_static(path):
 
 @app.route("/api/defaults")
 def api_defaults():
-    usda = _get_usda_prices()
+    usda_dm = _get_usda_prices()  # DM-basis prices
     ingredients = []
     for key, meta in INGREDIENT_META.items():
-        price = usda.get(key, FALLBACK_PRICES_PER_TON.get(key, INGREDIENTS[key]["cost_usd_per_ton_dm"]))
+        dm_price = usda_dm.get(key, FALLBACK_PRICES_PER_TON.get(key, INGREDIENTS[key]["cost_usd_per_ton_dm"]))
+        # Show farmers as-fed price (what they actually pay)
+        dm_pct = INGREDIENTS[key]["dm_pct"]
+        as_fed_price = dm_price * (dm_pct / 100.0)
         ingredients.append({
             "key": key,
             "name": meta["name"],
             "icon": meta["icon"],
             "category": meta["category"],
-            "price": round(price, 0),
-            "dm_pct": INGREDIENTS[key]["dm_pct"],
+            "price": round(as_fed_price, 0),
+            "dm_pct": dm_pct,
         })
     return jsonify({"ingredients": ingredients})
 
@@ -113,18 +123,20 @@ def api_optimize():
     economics = data.get("economics", {})
 
     start_wt = cattle.get("start_weight", 800)
-    target_wt = cattle.get("target_weight", 1350)
+    target_wt = cattle.get("target_weight", 1400)
     head_count = cattle.get("head_count", 100)
-    target_adg = cattle.get("target_adg", 3.0)
+    target_adg = cattle.get("target_adg", 3.2)
 
     # Build price overrides and excluded list
     excluded = tuple(k for k, v in ingredients.items() if not v.get("enabled", True))
     price_overrides = {}
     for k, v in ingredients.items():
         if v.get("enabled", True) and "price" in v:
-            price_overrides[k] = v["price"]
+            # User enters as-fed $/ton; convert to DM basis for optimizer
+            dm_pct = INGREDIENTS.get(k, {}).get("dm_pct", 100)
+            price_overrides[k] = v["price"] / (dm_pct / 100.0)
 
-    # Merge with USDA defaults
+    # Merge with USDA defaults (already DM basis)
     usda = _get_usda_prices()
     merged = dict(usda)
     merged.update(price_overrides)
@@ -295,15 +307,17 @@ def api_scenario():
     economics = data.get("economics", {})
 
     start_wt = cattle.get("start_weight", 800)
-    target_wt = cattle.get("target_weight", 1350)
-    target_adg = cattle.get("target_adg", 3.0)
+    target_wt = cattle.get("target_weight", 1400)
+    target_adg = cattle.get("target_adg", 3.2)
 
     excluded = tuple(k for k, v in ingredients.items() if not v.get("enabled", True))
     usda = _get_usda_prices()
     merged = dict(usda)
     for k, v in ingredients.items():
         if v.get("enabled", True) and "price" in v:
-            merged[k] = v["price"]
+            # User enters as-fed $/ton; convert to DM basis for optimizer
+            dm_pct = INGREDIENTS.get(k, {}).get("dm_pct", 100)
+            merged[k] = v["price"] / (dm_pct / 100.0)
 
     result = optimize_ration(
         start_wt, target_adg,

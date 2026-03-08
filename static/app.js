@@ -123,8 +123,8 @@ function buildPayload() {
         cattle: {
             head_count: intVal('head-count', 100),
             start_weight: intVal('start-weight', 800),
-            target_weight: intVal('target-weight', 1350),
-            target_adg: 3.0,
+            target_weight: intVal('target-weight', 1400),
+            target_adg: floatVal('target-adg', 3.2),
         },
         economics: {
             purchase_cwt: floatVal('eco-purchase', 370),
