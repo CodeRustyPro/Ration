@@ -610,9 +610,15 @@ function renderWhatIfResult(original, scenario, newAdg) {
         <span>$${scenario.feed_cost_per_day.toFixed(2)}/day</span>
     </div>`;
 
+    // Days on Feed with difference
+    const daysSign = daysDiff >= 0 ? '+' : '';
+    const daysClass = daysDiff > 0 ? 'up' : 'down'; // up means more days (usually negative/red for cost, but here we just show change)
+    // Actually for days on feed, more days is usually worse for profit, but let's just keep it simple or neutral.
+    // Let's use 'up' for more days and 'down' for fewer.
+
     html += `<div class="comp-row">
         <span>Days on feed</span>
-        <span>${Math.round(scenario.economics.days_on_feed)} days</span>
+        <span>${Math.round(scenario.economics.days_on_feed)} days <span class="comp-change ${daysClass}">(${daysSign}${Math.round(daysDiff)} d)</span></span>
     </div>`;
 
     html += `<div class="comp-row">
