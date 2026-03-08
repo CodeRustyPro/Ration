@@ -158,11 +158,8 @@ function renderResults(r) {
 
     document.getElementById('kpi-feed').textContent = '$' + r.feed_cost_per_day.toFixed(2);
 
-    const exitDay = r.optimal_exit.day;
-    const sellDate = r.optimal_exit.sell_date || ('Day ' + exitDay);
-    document.getElementById('kpi-sell-day').textContent = sellDate;
-    document.getElementById('kpi-sell-sub').textContent =
-        `Day ${exitDay} at ${r.optimal_exit.weight.toLocaleString()} lb`;
+    const daysOnFeed = Math.round(r.economics.days_on_feed);
+    document.getElementById('kpi-days-val').textContent = daysOnFeed;
 
     // Traffic Light Sell Signal
     const mc = r.economics.current_mc || 0;
