@@ -2,7 +2,7 @@
    Feed Ration Optimizer — Award-Winning Modern Light Mode Design
    ═══════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     /* Backgrounds */
@@ -19,7 +19,7 @@
     --text: #0F172A;
     --text-secondary: #475569;
     --text-light: #64748B;
-    --font-heading: 'Outfit', system-ui, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
 
     /* Accents (Jewel Tones for Premium contrast) */
