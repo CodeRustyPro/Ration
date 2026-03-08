@@ -171,6 +171,7 @@ h4,
     color: var(--text);
     background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 16px;
     letter-spacing: -1px;
