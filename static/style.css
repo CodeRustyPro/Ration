@@ -605,10 +605,36 @@ h4,
     line-height: 1.25;
 }
 
+.signal-amber {
+    color: var(--amber);
+    font-size: 24px;
+    line-height: 1.25;
+}
+
 .signal-red {
     color: var(--red);
     font-size: 24px;
     line-height: 1.25;
+}
+
+/* ── Chart Explanations ──────────────────────────────────────────────── */
+
+.chart-explanation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.chart-explanation p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.chart-explanation strong {
+    color: var(--text);
 }
 
 

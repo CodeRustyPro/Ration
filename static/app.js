@@ -167,17 +167,29 @@ function renderResults(r) {
     const signalEl = document.getElementById('kpi-signal');
     const signalSubEl = document.getElementById('kpi-signal-sub');
 
-    if (mr >= mc) {
-        signalEl.textContent = 'Keep Feeding';
-        signalEl.className = 'kpi-value traffic-light-val signal-green';
-        signalSubEl.textContent = `MR ($${mr.toFixed(2)}) ≥ MC ($${mc.toFixed(2)})`;
+    if (profit < 0) {
+        if (mr >= mc) {
+            signalEl.textContent = 'Minimize Loss';
+            signalEl.className = 'kpi-value traffic-light-val signal-amber';
+            signalSubEl.textContent = `Hedge Required (LRP)`;
+        } else {
+            signalEl.textContent = 'Sell Now';
+            signalEl.className = 'kpi-value traffic-light-val signal-red';
+            signalSubEl.textContent = `Stop Loss: MR < MC`;
+        }
     } else {
-        signalEl.textContent = 'Sell Now';
-        signalEl.className = 'kpi-value traffic-light-val signal-red';
-        signalSubEl.textContent = `MR ($${mr.toFixed(2)}) < MC ($${mc.toFixed(2)})`;
+        if (mr >= mc) {
+            signalEl.textContent = 'Keep Feeding';
+            signalEl.className = 'kpi-value traffic-light-val signal-green';
+            signalSubEl.textContent = `MR ($${mr.toFixed(2)}) ≥ MC ($${mc.toFixed(2)})`;
+        } else {
+            signalEl.textContent = 'Sell Now';
+            signalEl.className = 'kpi-value traffic-light-val signal-red';
+            signalSubEl.textContent = `Peak Profit: MR < MC`;
+        }
     }
 
-    // Insight banner
+    // Insight banner enhancement
     const insightArea = document.getElementById('results-content');
     const existingBanner = insightArea.querySelector('.insight-banner');
     if (existingBanner) existingBanner.remove();
@@ -185,12 +197,14 @@ function renderResults(r) {
     if (profit >= 0) {
         const banner = document.createElement('div');
         banner.className = 'insight-banner';
-        banner.textContent = `At $${r.feed_cost_per_day.toFixed(2)}/day feed cost and $${floatVal('eco-sale', 240)}/cwt sale price, you're projected to make $${profit.toLocaleString()}/head over ${Math.round(r.economics.days_on_feed)} days. Breakeven: $${r.economics.breakeven_cwt}/cwt.`;
+        banner.innerHTML = `<strong>Strategic Gain:</strong> $${profit.toLocaleString()}/head projected. <br>
+            <span style="font-size:13px;opacity:0.9">Breakeven: $${r.economics.breakeven_cwt}/cwt. Feed cost: $${r.feed_cost_per_day.toFixed(2)}/day.</span>`;
         insightArea.insertBefore(banner, insightArea.querySelector('.kpi-row'));
     } else {
         const banner = document.createElement('div');
         banner.className = 'insight-banner warning';
-        banner.textContent = `At current prices, you'd lose $${Math.abs(profit).toLocaleString()}/head. You need $${r.economics.breakeven_cwt}/cwt to break even. Consider adjusting ADG or waiting for better cattle prices.`;
+        banner.innerHTML = `<strong>Negative Margin Alert:</strong> Loss of $${Math.abs(profit).toLocaleString()}/head. <br>
+            <span style="font-size:13px;opacity:0.9">Market too narrow. Needed sale price: <strong>$${r.economics.breakeven_cwt}/cwt</strong>. Consider <strong>LRP Insurance</strong> or delaying placement.</span>`;
         insightArea.insertBefore(banner, insightArea.querySelector('.kpi-row'));
     }
 
