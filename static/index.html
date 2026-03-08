@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed Ration Optimizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app">
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- SETUP VIEW                                              -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div id="setup-view">
+            <div class="setup-container">
+                <div class="hero-text">
+                    <h1>Feed Ration Optimizer</h1>
+                    <p class="tagline">The cheapest ration that meets every nutrient requirement,<br>
+                    updated with real market prices.</p>
+                </div>
+
+                <div class="value-props">
+                    <div class="vp-item">
+                        <div class="vp-icon">$</div>
+                        <div class="vp-label">Real Prices</div>
+                        <div class="vp-desc">USDA + futures markets, not guesses</div>
+                    </div>
+                    <div class="vp-item">
+                        <div class="vp-icon">%</div>
+                        <div class="vp-label">Optimal Diet</div>
+                        <div class="vp-desc">Mathematically cheapest, NASEM-compliant</div>
+                    </div>
+                    <div class="vp-item">
+                        <div class="vp-icon">!</div>
+                        <div class="vp-label">When to Sell</div>
+                        <div class="vp-desc">Price-predicted optimal exit day</div>
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <h2>What feeds do you have?</h2>
+                    <p class="hint">Toggle on what's available. Enter your cost.</p>
+                    <div id="ingredient-grid" class="ingredient-grid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <h2>Your cattle</h2>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Head count</label>
+                            <input type="number" id="head-count" value="100" min="1" max="5000">
+                        </div>
+                        <div class="input-group">
+                            <label>Current weight (lb)</label>
+                            <input type="number" id="start-weight" value="800" min="400" max="1500" step="25">
+                        </div>
+                        <div class="input-group">
+                            <label>Target weight (lb)</label>
+                            <input type="number" id="target-weight" value="1350" min="800" max="1800" step="25">
+                        </div>
+                    </div>
+
+                    <details class="economics-toggle">
+                        <summary>Economics (good defaults provided)</summary>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Purchase ($/cwt)</label>
+                                <input type="number" id="eco-purchase" value="370" step="5">
+                            </div>
+                            <div class="input-group">
+                                <label>Sale price ($/cwt)</label>
+                                <input type="number" id="eco-sale" value="240" step="5">
+                            </div>
+                            <div class="input-group">
+                                <label>Yardage ($/hd/d)</label>
+                                <input type="number" id="eco-yardage" value="0.55" step="0.05">
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Interest (%)</label>
+                                <input type="number" id="eco-interest" value="8" step="0.5">
+                            </div>
+                            <div class="input-group">
+                                <label>Death loss (%)</label>
+                                <input type="number" id="eco-death" value="1.5" step="0.5">
+                            </div>
+                            <div class="input-group">
+                                <label>Vet cost ($/hd)</label>
+                                <input type="number" id="eco-vet" value="20" step="5">
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <button id="optimize-btn" class="primary-btn" onclick="runOptimize()">
+                    Optimize My Ration
+                </button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- RESULTS VIEW                                            -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div id="results-view" style="display:none;">
+
+            <!-- Top bar -->
+            <div class="top-bar">
+                <h1>Feed Ration Optimizer</h1>
+                <button class="text-btn" onclick="showSetup()">Edit Setup</button>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Optimizing your ration...</p>
+            </div>
+
+            <!-- Results content -->
+            <div id="results-content" style="display:none;">
+
+                <!-- KPI Cards -->
+                <div class="kpi-row">
+                    <div class="kpi-card" id="kpi-profit">
+                        <div class="kpi-label">Projected Profit</div>
+                        <div class="kpi-value" id="kpi-profit-val">--</div>
+                        <div class="kpi-sub">per head</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Feed Cost</div>
+                        <div class="kpi-value" id="kpi-feed">--</div>
+                        <div class="kpi-sub">per head/day</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Sell Decision</div>
+                        <div class="kpi-value traffic-light-val" id="kpi-signal">--</div>
+                        <div class="kpi-sub" id="kpi-signal-sub">calculating...</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Optimal Exit</div>
+                        <div class="kpi-value" id="kpi-sell-day">--</div>
+                        <div class="kpi-sub" id="kpi-sell-sub">target date</div>
+                    </div>
+                </div>
+
+                <!-- TODAY'S RECIPE & BUNK LOG -->
+                <div class="dual-section">
+                    <div class="section-card recipe-container">
+                        <div class="section-header">
+                            <h2>Today's Recipe <span style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:normal">(As-Fed)</span></h2>
+                            <span class="section-sub" id="recipe-sub"></span>
+                        </div>
+                        <div id="recipe-bars" class="recipe-bars">
+                            <!-- Filled by JS -->
+                        </div>
+                        <div class="recipe-footer">
+                            <div id="recipe-total"></div>
+                            <div id="recipe-batch"></div>
+                        </div>
+                    </div>
+
+                    <div class="section-card bunk-container">
+                        <div class="section-header">
+                            <h2>Bunk Management Log</h2>
+                            <span class="section-sub">Morning Reading</span>
+                        </div>
+                        <p class="hint">Log intake consistency to stabilize rumen health and inform the optimal exit date.</p>
+                        <div class="bunk-scores">
+                            <div class="bunk-btn" onclick="setBunkScore(0)" id="bunk-btn-0">
+                                <strong>0</strong>
+                                <span>Empty</span>
+                            </div>
+                            <div class="bunk-btn" onclick="setBunkScore(1)" id="bunk-btn-1">
+                                <strong>1</strong>
+                                <span>Crumbs</span>
+                            </div>
+                            <div class="bunk-btn" onclick="setBunkScore(2)" id="bunk-btn-2">
+                                <strong>2</strong>
+                                <span>Thin Layer</span>
+                            </div>
+                            <div class="bunk-btn" onclick="setBunkScore(3)" id="bunk-btn-3">
+                                <strong>3</strong>
+                                <span>25% left</span>
+                            </div>
+                            <div class="bunk-btn" onclick="setBunkScore(4)" id="bunk-btn-4">
+                                <strong>4</strong>
+                                <span>Untouched</span>
+                            </div>
+                        </div>
+                        <div id="bunk-feedback" class="bunk-feedback"></div>
+                    </div>
+                </div>
+
+                <!-- DIET EVOLUTION -->
+                <div class="section-card">
+                    <h2>How Your Diet Evolves</h2>
+                    <p class="hint">Cattle step up from high-roughage to high-concentrate over 4 phases to prevent acidosis.</p>
+                    <div id="phase-timeline" class="phase-timeline">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- WHEN TO SELL -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2>When to Sell</h2>
+                        <span class="section-sub" id="exit-insight"></span>
+                    </div>
+                    <div class="exit-metrics" id="exit-metrics"></div>
+                    <canvas id="exit-chart" height="260"></canvas>
+                    <div id="exit-legend" class="chart-legend"></div>
+                </div>
+
+                <!-- WHAT MOVES PROFIT MOST -->
+                <div class="section-card">
+                    <h2>What Moves Your Profit Most</h2>
+                    <p class="hint">A $10/cwt sale price swing moves ~$130/head - more than all operating costs combined.</p>
+                    <div id="sensitivity-bars" class="sensitivity-bars"></div>
+                </div>
+
+                <!-- WHAT IF -->
+                <div class="section-card">
+                    <h2>What If Prices Change?</h2>
+                    <p class="hint">Drag a slider. The diet re-optimizes instantly.</p>
+                    <div class="whatif-layout">
+                        <div class="whatif-sliders" id="whatif-sliders">
+                            <!-- Filled by JS -->
+                        </div>
+                        <div class="whatif-result" id="whatif-result">
+                            <div class="whatif-placeholder">Adjust a price to see the impact.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
